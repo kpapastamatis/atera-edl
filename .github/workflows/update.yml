@@ -5,6 +5,9 @@ on:
     - cron: '0 3 * * *'  # Τρέχει κάθε μέρα στις 03:00 UTC
   workflow_dispatch:     # Να μπορείς να το τρέχεις και χειροκίνητα
 
+permissions:
+  contents: write
+
 jobs:
   update-edl:
     runs-on: ubuntu-latest
