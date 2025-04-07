@@ -13,7 +13,7 @@ static_ips = [
     "54.246.140.239", "54.247.148.23", "54.247.164.78", "63.35.107.16"
 ]
 
-domains = ["pubsub.atera.com", "pubsub.pubnub.com"]
+domains = ["pubsub.atera.com", "pubsub.pubnub.com", "ps.pndsn.com"]
 
 def resolve_domain(domain):
     try:
