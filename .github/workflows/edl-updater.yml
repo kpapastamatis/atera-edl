@@ -1,0 +1,32 @@
+name: Generate EDL from DNS
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # Κάθε 10 λεπτά
+  workflow_dispatch: # Για να μπορείς να το τρέχεις και χειροκίνητα
+
+jobs:
+  dig_lookup:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Run 100 dig lookups and extract IPv4s
+      run: |
+        DOMAIN="a32dl55qcodech-ats.iot.eu-west-1.amazonaws.com"
+        > edl.txt
+        for i in {1..100}; do
+          dig +short $DOMAIN | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' >> edl_raw.txt
+        done
+        sort edl_raw.txt | uniq > edl.txt
+        rm edl_raw.txt
+
+    - name: Commit and push updated EDL
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git add edl.txt
+        git commit -m "Updated EDL list"
+        git push
