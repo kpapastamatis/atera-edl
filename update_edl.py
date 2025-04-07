@@ -29,4 +29,4 @@ for domain in domains:
 with open("atera_edl_ips.txt", "w") as f:
     for ip in sorted(resolved_ips):
         f.write(f"{ip}\n")
-    f.write(f"# Updated: {datetime.utcnow().isoformat()}Z\n")
+#    f.write(f"# Updated: {datetime.utcnow().isoformat()}Z\n")
