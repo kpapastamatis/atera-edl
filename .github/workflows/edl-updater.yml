@@ -2,7 +2,7 @@ name: Generate EDL from DNS
 
 on:
   schedule:
-    - cron: "*/10 * * * *" # Κάθε 10 λεπτά
+    - cron: "* * * * *" # Κάθε 1 λεπτό
   workflow_dispatch: # Για να μπορείς να το τρέχεις και χειροκίνητα
 
 jobs:
