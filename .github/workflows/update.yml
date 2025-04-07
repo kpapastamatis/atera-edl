@@ -1,0 +1,29 @@
+name: Update Atera EDL
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Τρέχει κάθε μέρα στις 03:00 UTC
+  workflow_dispatch:     # Να μπορείς να το τρέχεις και χειροκίνητα
+
+jobs:
+  update-edl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run update_edl.py
+        run: python update_edl.py
+
+      - name: Commit and push updated EDL
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add atera_edl_ips.txt
+          git commit -m "Automated update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
+          git push
