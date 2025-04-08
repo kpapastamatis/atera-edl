@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 DOMAIN = "a32dl55qcodech-ats.iot.eu-west-1.amazonaws.com"
-NUM_QUERIES = 100
+NUM_QUERIES = 50
 edl_file = Path("edl.txt")
 
 # Get current IPs from the file
