@@ -1,25 +1,46 @@
 import subprocess
-import re
-from pathlib import Path
+import time
+import random
 
-DOMAIN = "a32dl55qcodech-ats.iot.eu-west-1.amazonaws.com"
-NUM_QUERIES = 50
-edl_file = Path("edl.txt")
+LOOKUPS = 100
+DELAY_BETWEEN = 1  # seconds
+HOSTNAME = "a32dl55qcodech-ats.iot.eu-west-1.amazonaws.com"
+EDL_FILE = "edl.txt"
 
-# Get current IPs from the file
-existing_ips = set()
-if edl_file.exists():
-    existing_ips = set(edl_file.read_text().splitlines())
+def get_current_ips():
+    try:
+        with open(EDL_FILE, "r") as f:
+            return set(line.strip() for line in f if line.strip())
+    except FileNotFoundError:
+        return set()
 
-# Do dig queries and extract A records
-new_ips = set()
-for _ in range(NUM_QUERIES):
-    result = subprocess.run(["dig", "+short", DOMAIN], capture_output=True, text=True)
-    ips = re.findall(r"\b(?:\d{1,3}\.){3}\d{1,3}\b", result.stdout)
-    new_ips.update(ips)
+def run_dig():
+    try:
+        output = subprocess.check_output(["dig", "+short", HOSTNAME])
+        lines = output.decode("utf-8").splitlines()
+        return [line.strip() for line in lines if line.strip()]
+    except subprocess.CalledProcessError:
+        return []
 
-# Merge and sort unique IPs
-all_ips = sorted(existing_ips.union(new_ips))
+def main():
+    all_new_ips = set()
+    for _ in range(LOOKUPS):
+        new_ips = run_dig()
+        all_new_ips.update(new_ips)
+        time.sleep(DELAY_BETWEEN + random.uniform(0, 1))
 
-# Write back to the file
-edl_file.write_text("\n".join(all_ips) + "\n")
+    existing_ips = get_current_ips()
+    unique_new_ips = sorted(set(all_new_ips) - existing_ips)
+
+    if unique_new_ips:
+        with open(EDL_FILE, "a") as f:
+            for ip in unique_new_ips:
+                f.write(ip + "\n")
+        print(f"✅ Added {len(unique_new_ips)} new IPs:")
+        for ip in unique_new_ips:
+            print(" -", ip)
+    else:
+        print("ℹ️ No new IPs found.")
+
+if __name__ == "__main__":
+    main()
