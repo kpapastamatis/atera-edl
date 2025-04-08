@@ -1,0 +1,29 @@
+name: AWS IP EDL Updater
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Κάθε ώρα
+  workflow_dispatch:     # Επιτρέπει και χειροκίνητο trigger
+
+jobs:
+  update-edl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run script
+        run: python3 aws-edl-generator.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update AWS IP EDL"
+          git push
