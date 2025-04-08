@@ -12,4 +12,4 @@ with open("aws-all-ipv4.txt", "w") as f:
     for ip in all_ipv4:
         f.write(ip + "\n")
 
-print(f"✅ Saved {len(all_ipv4)} IPv4 ranges to aws-all-ipv4.txt")
+# print(f"✅ Saved {len(all_ipv4)} IPv4 ranges to aws-all-ipv4.txt")
